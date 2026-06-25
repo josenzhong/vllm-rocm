@@ -53,18 +53,24 @@
             </div>
           </div>
 
-          <form id="settingsForm" class="form-grid">
-            <label class="field wide">
+          <div class="mode-switch" role="tablist" aria-label="Configuration mode">
+            <button id="simpleModeBtn" class="mode-tab active" type="button" role="tab" aria-selected="true">Simple</button>
+            <button id="advancedModeBtn" class="mode-tab" type="button" role="tab" aria-selected="false">Advanced</button>
+          </div>
+          <p id="modeHelp" class="mode-help">Simple mode shows the common model, memory, dtype, and startup controls. Advanced mode adds cache, quantization, offload, batching, and MTP/speculative settings.</p>
+
+          <form id="settingsForm" class="form-grid simple-mode">
+            <label class="field wide simple-config">
               <span>Model</span>
               <div class="model-row">
                 <select id="modelSelect" aria-label="Local model picker"></select>
                 <button id="refreshModels" class="secondary" type="button">Scan local</button>
               </div>
-              <input id="model" type="text" placeholder="HauhauCS/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive or /models/my-local-model" />
+              <input id="model" type="text" placeholder="Hugging Face model ID or /models/my-local-model" />
               <small>Use a Hugging Face ID or a mounted local path. Local model folders should contain config.json.</small>
             </label>
 
-            <section class="field wide hub-card" aria-label="Hugging Face model search and download">
+            <section class="field wide hub-card simple-config" aria-label="Hugging Face model search and download">
               <div class="panel-header compact">
                 <div>
                   <h2>Hugging Face search and download</h2>
@@ -86,12 +92,12 @@
               <div id="downloadStatus" class="download-status"></div>
             </section>
 
-            <label class="field">
+            <label class="field simple-config">
               <span>Served model name</span>
               <input id="served_model_name" type="text" placeholder="optional alias" />
             </label>
 
-            <label class="field">
+            <label class="field simple-config">
               <span>dtype</span>
               <select id="dtype">
                 <option value="auto">auto</option>
@@ -101,37 +107,51 @@
               </select>
             </label>
 
-            <label class="field">
+            <label class="field simple-config">
               <span>GPU memory utilization</span>
               <input id="gpu_memory_utilization" type="number" min="0.1" max="1" step="0.01" />
             </label>
 
-            <label class="field">
+            <label class="field simple-config">
               <span>Max model length</span>
               <input id="max_model_len" type="number" min="1" step="1" placeholder="8192" />
             </label>
 
-            <label class="field">
+            <label class="switch-field simple-config">
+              <input id="trust_remote_code" type="checkbox" />
+              <span>Trust remote code</span>
+            </label>
+
+            <label class="switch-field simple-config">
+              <input id="auto_start" type="checkbox" />
+              <span>Auto-start when container starts</span>
+            </label>
+
+            <div class="advanced-divider advanced-config wide">
+              <span>Advanced performance settings</span>
+            </div>
+
+            <label class="field advanced-config">
               <span>Tensor parallel size</span>
               <input id="tensor_parallel_size" type="number" min="1" step="1" />
             </label>
 
-            <label class="field">
+            <label class="field advanced-config">
               <span>Pipeline parallel size</span>
               <input id="pipeline_parallel_size" type="number" min="1" step="1" />
             </label>
 
-            <label class="field">
+            <label class="field advanced-config">
               <span>Max batched tokens</span>
               <input id="max_num_batched_tokens" type="number" min="1" step="1" />
             </label>
 
-            <label class="field">
+            <label class="field advanced-config">
               <span>Max concurrent sequences</span>
               <input id="max_num_seqs" type="number" min="1" step="1" />
             </label>
 
-            <label class="field">
+            <label class="field advanced-config">
               <span>KV cache dtype</span>
               <select id="kv_cache_dtype">
                 <option value="auto">auto</option>
@@ -144,48 +164,38 @@
               </select>
             </label>
 
-            <label class="field">
+            <label class="field advanced-config">
               <span>Quantization</span>
               <input id="quantization" type="text" placeholder="awq, gptq, fp8, ..." />
             </label>
 
-            <label class="field">
+            <label class="field advanced-config">
               <span>CPU offload GB</span>
               <input id="cpu_offload_gb" type="number" min="0" step="1" />
             </label>
 
-            <label class="field">
+            <label class="field advanced-config">
               <span>Swap space GB</span>
               <input id="swap_space" type="number" min="0" step="1" />
             </label>
 
-            <label class="switch-field">
+            <label class="switch-field advanced-config">
               <input id="enable_prefix_caching" type="checkbox" />
               <span>Enable prefix caching</span>
             </label>
 
-            <label class="switch-field">
-              <input id="trust_remote_code" type="checkbox" />
-              <span>Trust remote code</span>
-            </label>
-
-            <label class="switch-field">
+            <label class="switch-field advanced-config">
               <input id="disable_log_requests" type="checkbox" />
               <span>Disable request logs</span>
             </label>
 
-            <label class="switch-field">
-              <input id="auto_start" type="checkbox" />
-              <span>Auto-start when container starts</span>
-            </label>
-
-            <label class="field wide">
+            <label class="field wide advanced-config">
               <span>Speculative / MTP config JSON</span>
               <textarea id="speculative_config" rows="4" placeholder='{"method":"mtp","num_speculative_tokens":1}'></textarea>
               <small>Leave blank to disable. Use JSON accepted by vLLM's --speculative-config.</small>
             </label>
 
-            <label class="field wide">
+            <label class="field wide advanced-config">
               <span>Extra raw vLLM args</span>
               <textarea id="extra_args" rows="3" placeholder="--enable-chunked-prefill --some-new-vllm-flag value"></textarea>
               <small>Advanced escape hatch for new vLLM flags not yet exposed above.</small>
