@@ -12,7 +12,7 @@
         <div>
           <p class="eyebrow">Unraid • ROCm • vLLM</p>
           <h1>vLLM ROCm Manager</h1>
-          <p class="subtitle">Pick local models, tune vLLM engine settings, and restart the OpenAI-compatible API from one modern WebUI.</p>
+          <p class="subtitle">Search Hugging Face, download models to Unraid storage, tune vLLM engine settings, and restart the OpenAI-compatible API from one modern WebUI.</p>
         </div>
         <div class="top-actions">
           <button id="themeToggle" class="ghost" type="button" aria-label="Toggle theme">Theme</button>
@@ -58,11 +58,33 @@
               <span>Model</span>
               <div class="model-row">
                 <select id="modelSelect" aria-label="Local model picker"></select>
-                <button id="refreshModels" class="secondary" type="button">Scan</button>
+                <button id="refreshModels" class="secondary" type="button">Scan local</button>
               </div>
-              <input id="model" type="text" placeholder="Qwen/Qwen3-0.6B or /models/my-local-model" />
+              <input id="model" type="text" placeholder="HauhauCS/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive or /models/my-local-model" />
               <small>Use a Hugging Face ID or a mounted local path. Local model folders should contain config.json.</small>
             </label>
+
+            <section class="field wide hub-card" aria-label="Hugging Face model search and download">
+              <div class="panel-header compact">
+                <div>
+                  <h2>Hugging Face search and download</h2>
+                  <p>Search models on huggingface.co and download a snapshot into /models.</p>
+                </div>
+              </div>
+              <div class="hub-search-row">
+                <input id="hfQuery" type="search" placeholder="Search models, e.g. Gemma 4B, Qwen, MTP" />
+                <button id="hfSearchBtn" class="secondary" type="button">Search</button>
+              </div>
+              <div id="hfResults" class="hub-results"></div>
+              <div class="download-row">
+                <input id="hfRepoId" type="text" placeholder="Repository ID to download, e.g. organization/model" />
+                <input id="hfRevision" type="text" placeholder="Revision, optional" />
+                <input id="hfLocalDir" type="text" placeholder="Local folder name, optional" />
+                <button id="hfDownloadBtn" class="primary" type="button">Download</button>
+              </div>
+              <small>Downloads run in the background. Gated or private models require the HF_TOKEN variable in the Unraid template.</small>
+              <div id="downloadStatus" class="download-status"></div>
+            </section>
 
             <label class="field">
               <span>Served model name</span>
