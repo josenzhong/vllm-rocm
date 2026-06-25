@@ -69,9 +69,9 @@ button { cursor: pointer; }
 h1, h2 { margin: 0; line-height: 1.1; }
 h1 { font-size: clamp(2rem, 5vw, 4.2rem); letter-spacing: -0.06em; }
 h2 { font-size: 1.05rem; }
-.subtitle { max-width: 780px; margin: 12px 0 0; color: var(--muted); font-size: 1.05rem; line-height: 1.55; }
+.subtitle { max-width: 840px; margin: 12px 0 0; color: var(--muted); font-size: 1.05rem; line-height: 1.55; }
 
-.top-actions, .button-row, .model-row {
+.top-actions, .button-row, .model-row, .hub-search-row, .download-row {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -100,7 +100,7 @@ button:hover, .ghost:hover { transform: translateY(-1px); border-color: var(--ac
   gap: 16px;
   margin-bottom: 16px;
 }
-.metric-card, .panel, .command-card {
+.metric-card, .panel, .command-card, .hub-card {
   border: 1px solid var(--border);
   border-radius: 24px;
   background: color-mix(in srgb, var(--panel) 92%, transparent);
@@ -144,6 +144,47 @@ button:hover, .ghost:hover { transform: translateY(-1px); border-color: var(--ac
 .field.wide { grid-column: 1 / -1; }
 .model-row { align-items: stretch; }
 .model-row select { flex: 1; min-width: 0; }
+.hub-card {
+  padding: 16px;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--panel-2) 65%, var(--panel));
+}
+.hub-search-row input { flex: 1 1 280px; }
+.download-row input { flex: 1 1 180px; }
+.hub-results, .download-status {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+.hub-result, .download-item {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px;
+  background: var(--panel);
+  display: grid;
+  gap: 8px;
+}
+.hub-result-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+.hub-result strong, .download-item strong { word-break: break-word; }
+.hub-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.chip {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: var(--panel-2);
+  color: var(--muted);
+}
 input, select, textarea {
   width: 100%;
   border: 1px solid var(--border);
@@ -198,7 +239,7 @@ pre {
 }
 
 @media (max-width: 780px) {
-  .topbar, .panel-header { flex-direction: column; }
+  .topbar, .panel-header, .hub-result-main { flex-direction: column; }
   .status-grid, .form-grid { grid-template-columns: 1fr; }
   .shell { width: min(100% - 20px, 1440px); padding-top: 18px; }
   .logs { min-height: 320px; }
