@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CommunityApplications>
+  <Profile>
+    Unraid Community Applications templates for running vLLM with AMD ROCm GPU acceleration.
+  </Profile>
+  <Icon>https://raw.githubusercontent.com/josenzhong/vllm-rocm/main/icon.svg</Icon>
+  <WebPage>https://github.com/josenzhong/vllm-rocm</WebPage>
+  <Forum>https://github.com/josenzhong/vllm-rocm/issues</Forum>
+</CommunityApplications>
