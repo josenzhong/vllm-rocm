@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """vLLM ROCm Manager for Unraid.
 
-A small stdlib-only WebUI/controller that launches vLLM as a subprocess.
+A small WebUI/controller that launches vLLM as a subprocess and can search/download
+models from Hugging Face Hub into a local /models mount.
 """
 
 from __future__ import annotations
 
 import json
 import os
+import re
 import signal
 import subprocess
 import threading
@@ -19,14 +21,23 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
+try:
+    from huggingface_hub import HfApi, snapshot_download
+except Exception:  # noqa: BLE001
+    HfApi = None  # type: ignore[assignment]
+    snapshot_download = None  # type: ignore[assignment]
+
 APP_DIR = Path(__file__).resolve().parent
 STATIC_DIR = APP_DIR / "static"
 CONFIG_PATH = Path(os.environ.get("VLLM_MANAGER_CONFIG", "/config/config.json"))
 CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+DEFAULT_MODEL = "HauhauCS/Gemma-4-E4B-Uncensored-HauhauCS-Aggressive"
 LOG_LIMIT = 1000
 LOGS: deque[str] = deque(maxlen=LOG_LIMIT)
 PROCESS: subprocess.Popen[str] | None = None
 PROCESS_LOCK = threading.RLock()
+DOWNLOAD_LOCK = threading.RLock()
+DOWNLOADS: dict[str, dict[str, Any]] = {}
 STARTED_AT: float | None = None
 
 
@@ -38,9 +49,34 @@ def append_log(line: str) -> None:
     LOGS.append(f"[{now()}] {line.rstrip()}")
 
 
+def hf_token() -> str | None:
+    return os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN") or None
+
+
+def model_roots() -> list[Path]:
+    return [Path(p) for p in os.environ.get("VLLM_MODEL_ROOTS", "/models").split(":") if p]
+
+
+def primary_model_root() -> Path:
+    roots = model_roots()
+    root = roots[0] if roots else Path("/models")
+    root.mkdir(parents=True, exist_ok=True)
+    return root
+
+
+def safe_model_dir_name(repo_id: str, override: str | None = None) -> str:
+    value = (override or repo_id).strip().strip("/")
+    value = value.replace("/", "__")
+    value = re.sub(r"[^A-Za-z0-9._-]+", "-", value)
+    value = value.strip(".-_")
+    if not value:
+        raise ValueError("Invalid model directory name")
+    return value[:180]
+
+
 def default_config() -> dict[str, Any]:
     return {
-        "model": "Qwen/Qwen3-0.6B",
+        "model": DEFAULT_MODEL,
         "served_model_name": "",
         "host": os.environ.get("VLLM_API_HOST", "0.0.0.0"),
         "port": int(os.environ.get("VLLM_API_PORT", "8000")),
@@ -82,7 +118,6 @@ def save_config(cfg: dict[str, Any]) -> None:
 
 
 def split_extra_args(value: str) -> list[str]:
-    # Minimal shell-like splitter that handles quoted segments without invoking a shell.
     import shlex
 
     if not value.strip():
@@ -140,7 +175,6 @@ def build_command(cfg: dict[str, Any]) -> list[str]:
 
     speculative_config = str(cfg.get("speculative_config") or "").strip()
     if speculative_config:
-        # Validate JSON so users get an early error in the manager.
         json.loads(speculative_config)
         command.extend(["--speculative-config", speculative_config])
 
@@ -205,11 +239,9 @@ def stop_vllm() -> dict[str, Any]:
 
 
 def scan_models() -> list[dict[str, str]]:
-    roots = [p for p in os.environ.get("VLLM_MODEL_ROOTS", "/models").split(":") if p]
     results: list[dict[str, str]] = []
     seen: set[str] = set()
-    for root_text in roots:
-        root = Path(root_text)
+    for root in model_roots():
         if not root.exists():
             continue
         for config_file in root.rglob("config.json"):
@@ -227,6 +259,95 @@ def scan_models() -> list[dict[str, str]]:
             if len(results) >= 500:
                 break
     return sorted(results, key=lambda item: item["name"].lower())
+
+
+def hf_search(query: str, limit: int = 20) -> list[dict[str, Any]]:
+    query = query.strip()
+    if not query:
+        return []
+    if HfApi is None:
+        raise RuntimeError("huggingface_hub is not installed in this image")
+    api = HfApi(token=hf_token())
+    models = api.list_models(search=query, limit=min(max(limit, 1), 50), full=False)
+    results: list[dict[str, Any]] = []
+    for model in models:
+        model_id = getattr(model, "modelId", None) or getattr(model, "id", None)
+        if not model_id:
+            continue
+        results.append(
+            {
+                "id": model_id,
+                "author": getattr(model, "author", "") or "",
+                "downloads": getattr(model, "downloads", None),
+                "likes": getattr(model, "likes", None),
+                "tags": list(getattr(model, "tags", []) or [])[:12],
+                "pipeline_tag": getattr(model, "pipeline_tag", None),
+            }
+        )
+    return results
+
+
+def download_worker(download_id: str, repo_id: str, target: Path, revision: str | None) -> None:
+    with DOWNLOAD_LOCK:
+        DOWNLOADS[download_id].update({"state": "running", "message": "Downloading", "started_at": now()})
+    append_log(f"Downloading Hugging Face model {repo_id} to {target}")
+    try:
+        if snapshot_download is None:
+            raise RuntimeError("huggingface_hub is not installed in this image")
+        target.mkdir(parents=True, exist_ok=True)
+        snapshot_download(
+            repo_id=repo_id,
+            revision=revision or None,
+            local_dir=str(target),
+            token=hf_token(),
+            resume_download=True,
+        )
+        with DOWNLOAD_LOCK:
+            DOWNLOADS[download_id].update(
+                {
+                    "state": "completed",
+                    "message": "Download completed",
+                    "completed_at": now(),
+                    "path": str(target),
+                }
+            )
+        append_log(f"Completed download for {repo_id}")
+    except Exception as exc:  # noqa: BLE001
+        with DOWNLOAD_LOCK:
+            DOWNLOADS[download_id].update({"state": "failed", "message": str(exc), "completed_at": now()})
+        append_log(f"Download failed for {repo_id}: {exc}")
+
+
+def start_download(payload: dict[str, Any]) -> dict[str, Any]:
+    repo_id = str(payload.get("repo_id") or payload.get("id") or "").strip()
+    if not repo_id or "/" not in repo_id:
+        raise ValueError("A Hugging Face model repo_id like organization/model is required")
+    revision = str(payload.get("revision") or "").strip() or None
+    dir_name = safe_model_dir_name(repo_id, str(payload.get("local_dir") or "").strip() or None)
+    target = primary_model_root() / dir_name
+    try:
+        target.resolve().relative_to(primary_model_root().resolve())
+    except ValueError as exc:
+        raise ValueError("Download target must stay inside the configured /models root") from exc
+
+    download_id = f"{safe_model_dir_name(repo_id)}-{int(time.time())}"
+    with DOWNLOAD_LOCK:
+        DOWNLOADS[download_id] = {
+            "id": download_id,
+            "repo_id": repo_id,
+            "revision": revision or "main",
+            "target": str(target),
+            "state": "queued",
+            "message": "Queued",
+            "created_at": now(),
+        }
+    threading.Thread(target=download_worker, args=(download_id, repo_id, target, revision), daemon=True).start()
+    return DOWNLOADS[download_id]
+
+
+def downloads_payload() -> list[dict[str, Any]]:
+    with DOWNLOAD_LOCK:
+        return sorted(DOWNLOADS.values(), key=lambda item: item.get("created_at", ""), reverse=True)
 
 
 def status_payload() -> dict[str, Any]:
@@ -256,6 +377,7 @@ def status_payload() -> dict[str, Any]:
         "api_base": f"http://{cfg.get('host', '0.0.0.0')}:{cfg.get('port', 8000)}/v1",
         "command": command,
         "command_error": command_error,
+        "downloads": downloads_payload(),
     }
 
 
@@ -295,6 +417,15 @@ class Handler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/models":
             self.send_json({"models": scan_models()})
             return
+        if parsed.path == "/api/hf/search":
+            params = urllib.parse.parse_qs(parsed.query)
+            query = params.get("q", [""])[0]
+            limit = int(params.get("limit", ["20"])[0])
+            self.send_json({"models": hf_search(query, limit=limit)})
+            return
+        if parsed.path == "/api/downloads":
+            self.send_json({"downloads": downloads_payload()})
+            return
         if parsed.path == "/api/logs":
             self.send_json({"logs": list(LOGS)})
             return
@@ -311,7 +442,6 @@ class Handler(SimpleHTTPRequestHandler):
             if parsed.path == "/api/config":
                 cfg = default_config()
                 cfg.update(self.read_json())
-                # Validate by building command before saving.
                 build_command(cfg)
                 save_config(cfg)
                 self.send_json({"ok": True, "config": cfg, "command": build_command(cfg)})
@@ -330,6 +460,9 @@ class Handler(SimpleHTTPRequestHandler):
                 stop_vllm()
                 self.send_json(start_vllm(cfg))
                 return
+            if parsed.path == "/api/hf/download":
+                self.send_json({"ok": True, "download": start_download(self.read_json())})
+                return
             self.send_error(HTTPStatus.NOT_FOUND, "Not found")
         except Exception as exc:  # noqa: BLE001
             append_log(f"API error: {exc}")
@@ -342,6 +475,7 @@ def main() -> None:
     port = int(os.environ.get("VLLM_MANAGER_PORT", "8080"))
     append_log(f"vLLM ROCm Manager starting on {host}:{port}")
     append_log(f"Config path: {CONFIG_PATH}")
+    append_log(f"Primary model download root: {primary_model_root()}")
     if cfg.get("auto_start"):
         try:
             start_vllm(cfg)
