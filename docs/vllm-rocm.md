@@ -1,20 +1,25 @@
-# vLLM ROCm for Unraid
+# vLLM ROCm Manager for Unraid
 
-This template runs the official `vllm/vllm-openai-rocm:latest` container on Unraid for AMD ROCm-capable GPUs.
+This project builds a custom Unraid-friendly Docker image based on the official `vllm/vllm-openai-rocm:latest` image. It adds a lightweight modern WebUI for selecting models, configuring vLLM launch settings, starting/stopping/restarting the vLLM process, and viewing logs.
 
-## What this app is
+## Ports
 
-vLLM is an OpenAI-compatible inference API server. It is best used as a backend for applications such as Open WebUI, LiteLLM, Lobe Chat, custom scripts, or other tools that can talk to an OpenAI-compatible `/v1` API.
+- `8080`: vLLM ROCm Manager WebUI
+- `8000`: vLLM OpenAI-compatible API, available after vLLM is started from the WebUI
 
-## What this app is not
+## What this app does
 
-This container does **not** include a full browser WebUI for downloading models, browsing local models, changing settings at runtime, or chatting directly. The Unraid WebUI controls the Docker container only. The template's WebUI button opens `/v1/models` as a simple API health check.
+The manager WebUI lets you:
 
-To get a full browser chat interface, install Open WebUI or another frontend and point it at:
-
-```text
-http://UNRAID_IP:8000/v1
-```
+- Scan local models mounted under `/models`
+- Select a local Hugging Face-format model folder containing `config.json`
+- Enter a Hugging Face model ID such as `Qwen/Qwen3-0.6B`
+- Configure common and advanced vLLM settings
+- Preview the generated `vllm serve` command
+- Save configuration under `/config/config.json`
+- Start, stop, and restart the vLLM subprocess
+- View manager and vLLM logs
+- Use light or dark mode
 
 ## Requirements
 
@@ -26,41 +31,78 @@ http://UNRAID_IP:8000/v1
 
 Consumer Radeon GPU compatibility can depend on the ROCm/vLLM image version and selected model. The template follows the official vLLM ROCm Docker run pattern, but it cannot guarantee every AMD GPU/model combination will run.
 
-## Default configuration
+## Paths
 
-The template starts with:
-
-```text
---model Qwen/Qwen3-0.6B
-```
-
-This is intended as a small smoke-test model. After confirming the container works, change the **Model Arguments** field to your desired model.
-
-Example for a Hugging Face model:
+Default Unraid mappings:
 
 ```text
---model Qwen/Qwen2.5-7B-Instruct --dtype auto --gpu-memory-utilization 0.90 --max-model-len 8192
-```
-
-## Local models
-
-The template maps this host path by default:
-
-```text
+/mnt/user/appdata/vllm/config -> /config
+/mnt/user/appdata/vllm/cache  -> /root/.cache/huggingface
 /mnt/user/appdata/vllm/models -> /models
 ```
 
-Put a complete Hugging Face-format model folder inside that directory, then set **Model Arguments** to a container path, for example:
+Put local Hugging Face-format models inside:
 
 ```text
---model /models/my-local-model --dtype auto --gpu-memory-utilization 0.90 --max-model-len 8192
+/mnt/user/appdata/vllm/models
 ```
 
-vLLM reads the model path at startup. To switch models, edit the container's **Model Arguments** and restart the container.
+For example:
+
+```text
+/mnt/user/appdata/vllm/models/Qwen2.5-7B-Instruct/config.json
+```
+
+The WebUI will scan for directories containing `config.json` and offer them in the local model picker.
+
+## Default model
+
+The default launch profile uses:
+
+```text
+Qwen/Qwen3-0.6B
+```
+
+This is intended as a small smoke-test model. After confirming the container and GPU mapping work, change the model and advanced settings in the WebUI.
+
+## Advanced settings
+
+The first manager version exposes:
+
+- dtype
+- GPU memory utilization
+- max model length
+- tensor parallel size
+- pipeline parallel size
+- max batched tokens
+- max concurrent sequences
+- KV cache dtype, including fp8 and int8 options exposed by vLLM
+- model quantization field
+- prefix caching
+- CPU offload GB
+- swap space GB
+- trust remote code
+- disable request logs
+- speculative/MTP config JSON
+- extra raw vLLM args
+
+Most vLLM engine settings require restarting vLLM. Use the WebUI **Restart** button after changing model or engine settings.
+
+## MTP / speculative decoding
+
+Use the **Speculative / MTP config JSON** box for vLLM's `--speculative-config` value.
+
+Example:
+
+```json
+{"method":"mtp","num_speculative_tokens":1}
+```
+
+MTP only works with models supported by vLLM for MTP. For unsupported models, use another speculative decoding method supported by your vLLM version or leave the field blank.
 
 ## API endpoint
 
-vLLM exposes an OpenAI-compatible API:
+After vLLM starts, the OpenAI-compatible API is:
 
 ```text
 http://UNRAID_IP:8000/v1
@@ -71,6 +113,8 @@ Test with:
 ```bash
 curl http://UNRAID_IP:8000/v1/models
 ```
+
+Use this endpoint with Open WebUI, LiteLLM, Lobe Chat, or other OpenAI-compatible clients.
 
 ## Troubleshooting
 
@@ -83,3 +127,5 @@ ls -l /dev/dri/render*
 ```
 
 If `/dev/kfd` is missing, fix AMD GPU support on the Unraid host before troubleshooting vLLM.
+
+If the WebUI starts but vLLM fails, open the WebUI logs panel. Common causes include an unsupported model, insufficient VRAM, incompatible quantization settings, invalid speculative config JSON, or ROCm support issues for the selected GPU/model combination.
