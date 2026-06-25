@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>vLLM ROCm Manager</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Unraid • ROCm • vLLM</p>
+          <h1>vLLM ROCm Manager</h1>
+          <p class="subtitle">Pick local models, tune vLLM engine settings, and restart the OpenAI-compatible API from one modern WebUI.</p>
+        </div>
+        <div class="top-actions">
+          <button id="themeToggle" class="ghost" type="button" aria-label="Toggle theme">Theme</button>
+          <a class="ghost" href="/api/status" target="_blank" rel="noreferrer">API status</a>
+        </div>
+      </header>
+
+      <section class="status-grid" aria-live="polite">
+        <article class="metric-card">
+          <span>Status</span>
+          <strong id="runningStatus">Checking...</strong>
+          <small id="pidStatus">PID: -</small>
+        </article>
+        <article class="metric-card">
+          <span>Model</span>
+          <strong id="modelStatus">-</strong>
+          <small id="uptimeStatus">Uptime: -</small>
+        </article>
+        <article class="metric-card">
+          <span>OpenAI API</span>
+          <strong id="apiStatus">:8000/v1</strong>
+          <small>Use this in Open WebUI or clients</small>
+        </article>
+      </section>
+
+      <main class="layout">
+        <section class="panel primary-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Launch profile</h2>
+              <p>Save settings, preview the command, then start or restart vLLM.</p>
+            </div>
+            <div class="button-row">
+              <button id="saveBtn" class="secondary" type="button">Save</button>
+              <button id="startBtn" class="success" type="button">Start</button>
+              <button id="restartBtn" class="primary" type="button">Restart</button>
+              <button id="stopBtn" class="danger" type="button">Stop</button>
+            </div>
+          </div>
+
+          <form id="settingsForm" class="form-grid">
+            <label class="field wide">
+              <span>Model</span>
+              <div class="model-row">
+                <select id="modelSelect" aria-label="Local model picker"></select>
+                <button id="refreshModels" class="secondary" type="button">Scan</button>
+              </div>
+              <input id="model" type="text" placeholder="Qwen/Qwen3-0.6B or /models/my-local-model" />
+              <small>Use a Hugging Face ID or a mounted local path. Local model folders should contain config.json.</small>
+            </label>
+
+            <label class="field">
+              <span>Served model name</span>
+              <input id="served_model_name" type="text" placeholder="optional alias" />
+            </label>
+
+            <label class="field">
+              <span>dtype</span>
+              <select id="dtype">
+                <option value="auto">auto</option>
+                <option value="float16">float16</option>
+                <option value="bfloat16">bfloat16</option>
+                <option value="half">half</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>GPU memory utilization</span>
+              <input id="gpu_memory_utilization" type="number" min="0.1" max="1" step="0.01" />
+            </label>
+
+            <label class="field">
+              <span>Max model length</span>
+              <input id="max_model_len" type="number" min="1" step="1" placeholder="8192" />
+            </label>
+
+            <label class="field">
+              <span>Tensor parallel size</span>
+              <input id="tensor_parallel_size" type="number" min="1" step="1" />
+            </label>
+
+            <label class="field">
+              <span>Pipeline parallel size</span>
+              <input id="pipeline_parallel_size" type="number" min="1" step="1" />
+            </label>
+
+            <label class="field">
+              <span>Max batched tokens</span>
+              <input id="max_num_batched_tokens" type="number" min="1" step="1" />
+            </label>
+
+            <label class="field">
+              <span>Max concurrent sequences</span>
+              <input id="max_num_seqs" type="number" min="1" step="1" />
+            </label>
+
+            <label class="field">
+              <span>KV cache dtype</span>
+              <select id="kv_cache_dtype">
+                <option value="auto">auto</option>
+                <option value="fp8">fp8</option>
+                <option value="fp8_e4m3">fp8_e4m3</option>
+                <option value="fp8_e5m2">fp8_e5m2</option>
+                <option value="bfloat16">bfloat16</option>
+                <option value="float16">float16</option>
+                <option value="int8_per_token_head">int8_per_token_head</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Quantization</span>
+              <input id="quantization" type="text" placeholder="awq, gptq, fp8, ..." />
+            </label>
+
+            <label class="field">
+              <span>CPU offload GB</span>
+              <input id="cpu_offload_gb" type="number" min="0" step="1" />
+            </label>
+
+            <label class="field">
+              <span>Swap space GB</span>
+              <input id="swap_space" type="number" min="0" step="1" />
+            </label>
+
+            <label class="switch-field">
+              <input id="enable_prefix_caching" type="checkbox" />
+              <span>Enable prefix caching</span>
+            </label>
+
+            <label class="switch-field">
+              <input id="trust_remote_code" type="checkbox" />
+              <span>Trust remote code</span>
+            </label>
+
+            <label class="switch-field">
+              <input id="disable_log_requests" type="checkbox" />
+              <span>Disable request logs</span>
+            </label>
+
+            <label class="switch-field">
+              <input id="auto_start" type="checkbox" />
+              <span>Auto-start when container starts</span>
+            </label>
+
+            <label class="field wide">
+              <span>Speculative / MTP config JSON</span>
+              <textarea id="speculative_config" rows="4" placeholder='{"method":"mtp","num_speculative_tokens":1}'></textarea>
+              <small>Leave blank to disable. Use JSON accepted by vLLM's --speculative-config.</small>
+            </label>
+
+            <label class="field wide">
+              <span>Extra raw vLLM args</span>
+              <textarea id="extra_args" rows="3" placeholder="--enable-chunked-prefill --some-new-vllm-flag value"></textarea>
+              <small>Advanced escape hatch for new vLLM flags not yet exposed above.</small>
+            </label>
+          </form>
+
+          <section class="command-card">
+            <div class="panel-header compact">
+              <div>
+                <h2>Command preview</h2>
+                <p>The manager runs this without a shell.</p>
+              </div>
+              <button id="copyCommand" class="secondary" type="button">Copy</button>
+            </div>
+            <pre id="commandPreview">Loading...</pre>
+          </section>
+        </section>
+
+        <aside class="panel side-panel">
+          <div class="panel-header compact">
+            <div>
+              <h2>Runtime logs</h2>
+              <p>Last 1000 manager and vLLM lines.</p>
+            </div>
+            <button id="refreshLogs" class="secondary" type="button">Refresh</button>
+          </div>
+          <pre id="logs" class="logs">Loading logs...</pre>
+          <div id="toast" class="toast" role="status" aria-live="polite"></div>
+        </aside>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
