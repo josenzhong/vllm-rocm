@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="960" viewBox="0 0 1440 960" role="img" aria-labelledby="title desc">
+  <title id="title">vLLM ROCm Manager WebUI screenshot</title>
+  <desc id="desc">Mock screenshot of the vLLM ROCm Manager web interface with status cards, model search, settings, command preview, and logs.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="1" stop-color="#0b1020"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="22" stdDeviation="26" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="960" fill="url(#bg)"/>
+  <circle cx="175" cy="120" r="270" fill="#f97316" opacity="0.16"/>
+  <rect x="56" y="48" width="1328" height="864" rx="34" fill="#111827" stroke="#26344d" filter="url(#shadow)"/>
+
+  <text x="94" y="106" fill="#fb923c" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3">UNRAID • ROCM • VLLM</text>
+  <text x="94" y="168" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="800">vLLM ROCm Manager</text>
+  <text x="94" y="210" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="22">Search models, download to Unraid storage, tune engine settings, and launch the API.</text>
+  <rect x="1190" y="88" width="86" height="42" rx="21" fill="#172033" stroke="#26344d"/>
+  <text x="1211" y="116" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="15">Theme</text>
+  <rect x="1288" y="88" width="64" height="42" rx="21" fill="#172033" stroke="#26344d"/>
+  <text x="1305" y="116" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="15">API</text>
+
+  <g transform="translate(94 250)">
+    <rect width="392" height="104" rx="24" fill="#172033" stroke="#26344d"/>
+    <text x="24" y="36" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">Status</text>
+    <text x="24" y="72" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700">Stopped</text>
+    <text x="250" y="72" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">PID: -</text>
+  </g>
+  <g transform="translate(514 250)">
+    <rect width="392" height="104" rx="24" fill="#172033" stroke="#26344d"/>
+    <text x="24" y="36" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">Model</text>
+    <text x="24" y="72" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700">Hub or /models path</text>
+  </g>
+  <g transform="translate(934 250)">
+    <rect width="392" height="104" rx="24" fill="#172033" stroke="#26344d"/>
+    <text x="24" y="36" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">OpenAI API</text>
+    <text x="24" y="72" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700">:8000/v1</text>
+  </g>
+
+  <g transform="translate(94 382)">
+    <rect width="830" height="478" rx="26" fill="#111827" stroke="#26344d"/>
+    <text x="28" y="44" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700">Launch profile</text>
+    <text x="28" y="74" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">Save settings, preview the command, then start or restart vLLM.</text>
+    <rect x="530" y="24" width="76" height="40" rx="20" fill="#172033" stroke="#26344d"/>
+    <text x="552" y="50" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Save</text>
+    <rect x="616" y="24" width="76" height="40" rx="20" fill="#123524" stroke="#2b8a4f"/>
+    <text x="639" y="50" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Start</text>
+    <rect x="702" y="24" width="96" height="40" rx="20" fill="#f97316"/>
+    <text x="724" y="50" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700">Restart</text>
+
+    <rect x="28" y="104" width="774" height="152" rx="22" fill="#172033" stroke="#26344d"/>
+    <text x="52" y="138" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="700">Model search and download</text>
+    <rect x="52" y="158" width="530" height="40" rx="14" fill="#0b1020" stroke="#26344d"/>
+    <text x="70" y="184" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Search models...</text>
+    <rect x="594" y="158" width="92" height="40" rx="20" fill="#243047" stroke="#394763"/>
+    <text x="616" y="184" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="15">Search</text>
+    <rect x="52" y="212" width="300" height="26" rx="13" fill="#0b1020" stroke="#26344d"/>
+    <text x="68" y="231" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">Download status: ready</text>
+
+    <text x="28" y="294" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Model</text>
+    <rect x="28" y="306" width="774" height="44" rx="14" fill="#172033" stroke="#26344d"/>
+    <text x="48" y="334" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="16">/models/example-model</text>
+
+    <g transform="translate(28 370)">
+      <rect width="242" height="56" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="18" y="23" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">GPU memory</text>
+      <text x="18" y="43" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17">0.90</text>
+      <rect x="266" width="242" height="56" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="284" y="23" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">KV cache dtype</text>
+      <text x="284" y="43" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17">auto / fp8 / int8</text>
+      <rect x="532" width="242" height="56" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="550" y="23" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">Speculative config</text>
+      <text x="550" y="43" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17">JSON</text>
+    </g>
+  </g>
+
+  <g transform="translate(952 382)">
+    <rect width="374" height="478" rx="26" fill="#111827" stroke="#26344d"/>
+    <text x="26" y="44" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700">Runtime logs</text>
+    <text x="26" y="74" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">Manager and vLLM output</text>
+    <rect x="26" y="104" width="322" height="338" rx="18" fill="#080d18"/>
+    <text x="46" y="140" fill="#93c5fd" font-family="Menlo, Consolas, monospace" font-size="14">[12:00:01] manager ready</text>
+    <text x="46" y="168" fill="#93c5fd" font-family="Menlo, Consolas, monospace" font-size="14">[12:00:05] model scan done</text>
+    <text x="46" y="196" fill="#93c5fd" font-family="Menlo, Consolas, monospace" font-size="14">[12:00:09] command preview</text>
+    <text x="46" y="224" fill="#93c5fd" font-family="Menlo, Consolas, monospace" font-size="14">[12:00:14] waiting...</text>
+  </g>
+</svg>
