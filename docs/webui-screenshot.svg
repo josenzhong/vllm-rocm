@@ -1,124 +1,143 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title desc">
-  <title id="title">vLLM ROCm Manager Simple and Advanced WebUI modes</title>
-  <desc id="desc">Side by side mock screenshot showing Simple mode with common configuration fields and Advanced mode with performance tuning fields.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120" role="img" aria-labelledby="title desc">
+  <title id="title">vLLM ROCm Manager WebUI full page screenshot</title>
+  <desc id="desc">Full WebUI mock screenshot showing the manager header, status cards, simple mode, advanced mode, command preview, and runtime logs.</desc>
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
       <stop offset="0" stop-color="#0b1020"/>
       <stop offset="1" stop-color="#111827"/>
     </linearGradient>
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
-      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000" flood-opacity="0.34"/>
+      <feDropShadow dx="0" dy="22" stdDeviation="26" flood-color="#000" flood-opacity="0.35"/>
     </filter>
   </defs>
-  <rect width="1600" height="980" fill="url(#bg)"/>
-  <circle cx="165" cy="92" r="280" fill="#f97316" opacity="0.15"/>
-  <circle cx="1420" cy="900" r="300" fill="#fb923c" opacity="0.08"/>
+  <rect width="1600" height="1120" fill="url(#bg)"/>
+  <circle cx="180" cy="110" r="300" fill="#f97316" opacity="0.15"/>
+  <circle cx="1450" cy="1060" r="340" fill="#fb923c" opacity="0.08"/>
 
-  <text x="72" y="72" fill="#fb923c" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing="3">UNRAID • ROCM • VLLM</text>
-  <text x="72" y="128" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="52" font-weight="800">vLLM ROCm Manager</text>
-  <text x="72" y="166" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="21">Simple mode for common setup. Advanced mode for performance tuning, cache settings, quantization, and MTP.</text>
+  <rect x="54" y="44" width="1492" height="1032" rx="34" fill="#111827" stroke="#26344d" filter="url(#shadow)"/>
 
-  <g transform="translate(72 206)">
-    <rect width="704" height="704" rx="32" fill="#111827" stroke="#26344d" filter="url(#shadow)"/>
-    <text x="34" y="48" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800">Simple configuration</text>
-    <text x="34" y="78" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">Default view for model selection, download, memory, dtype, and startup.</text>
+  <text x="94" y="104" fill="#fb923c" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800" letter-spacing="3">UNRAID • ROCM • VLLM</text>
+  <text x="94" y="162" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="800">vLLM ROCm Manager</text>
+  <text x="94" y="200" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="20">Search Hugging Face, download models, tune engine settings, and restart the API from one full WebUI.</text>
+  <rect x="1310" y="84" width="86" height="42" rx="21" fill="#172033" stroke="#26344d"/>
+  <text x="1331" y="112" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="15">Theme</text>
+  <rect x="1408" y="84" width="86" height="42" rx="21" fill="#172033" stroke="#26344d"/>
+  <text x="1433" y="112" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="15">API</text>
 
-    <rect x="34" y="106" width="166" height="46" rx="23" fill="#f97316"/>
-    <text x="86" y="136" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800">Simple</text>
-    <rect x="208" y="106" width="180" height="46" rx="23" fill="#172033" stroke="#26344d"/>
-    <text x="260" y="136" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">Advanced</text>
+  <g transform="translate(94 242)">
+    <rect width="448" height="94" rx="24" fill="#172033" stroke="#26344d"/>
+    <text x="24" y="34" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Status</text>
+    <text x="24" y="68" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">Stopped</text>
+    <text x="340" y="68" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">PID: -</text>
+  </g>
+  <g transform="translate(576 242)">
+    <rect width="448" height="94" rx="24" fill="#172033" stroke="#26344d"/>
+    <text x="24" y="34" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Model</text>
+    <text x="24" y="68" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="23" font-weight="800">Hub ID or /models path</text>
+  </g>
+  <g transform="translate(1058 242)">
+    <rect width="448" height="94" rx="24" fill="#172033" stroke="#26344d"/>
+    <text x="24" y="34" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">OpenAI API</text>
+    <text x="24" y="68" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">:8000/v1</text>
+  </g>
 
-    <rect x="34" y="182" width="636" height="140" rx="22" fill="#172033" stroke="#26344d"/>
-    <text x="58" y="216" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">Model</text>
-    <rect x="58" y="236" width="486" height="40" rx="14" fill="#0b1020" stroke="#26344d"/>
-    <text x="78" y="262" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Choose local model...</text>
-    <rect x="554" y="236" width="90" height="40" rx="20" fill="#243047" stroke="#394763"/>
-    <text x="575" y="262" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Scan</text>
-    <rect x="58" y="286" width="586" height="20" rx="10" fill="#0b1020" opacity="0.9"/>
-    <text x="78" y="301" fill="#93c5fd" font-family="Inter, Arial, sans-serif" font-size="12">Hugging Face ID or /models/local-path</text>
+  <g transform="translate(94 368)">
+    <rect width="948" height="646" rx="28" fill="#111827" stroke="#26344d"/>
+    <text x="28" y="44" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800">Launch profile</text>
+    <text x="28" y="74" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">Save settings, preview the command, then start or restart vLLM.</text>
+    <rect x="560" y="24" width="76" height="40" rx="20" fill="#172033" stroke="#26344d"/>
+    <text x="582" y="50" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Save</text>
+    <rect x="646" y="24" width="76" height="40" rx="20" fill="#123524" stroke="#2b8a4f"/>
+    <text x="668" y="50" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Start</text>
+    <rect x="732" y="24" width="96" height="40" rx="20" fill="#f97316"/>
+    <text x="754" y="50" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800">Restart</text>
+    <rect x="838" y="24" width="74" height="40" rx="20" fill="#361820" stroke="#8b2c35"/>
+    <text x="862" y="50" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Stop</text>
 
-    <rect x="34" y="346" width="636" height="156" rx="22" fill="#172033" stroke="#26344d"/>
-    <text x="58" y="380" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">Hub search and download</text>
-    <rect x="58" y="402" width="462" height="40" rx="14" fill="#0b1020" stroke="#26344d"/>
-    <text x="78" y="428" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Search models...</text>
-    <rect x="530" y="402" width="96" height="40" rx="20" fill="#243047" stroke="#394763"/>
-    <text x="556" y="428" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Search</text>
-    <rect x="58" y="456" width="178" height="28" rx="14" fill="#0b1020" stroke="#26344d"/>
-    <text x="76" y="475" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">Download ready</text>
+    <rect x="28" y="104" width="172" height="48" rx="24" fill="#172033" stroke="#26344d"/>
+    <rect x="34" y="110" width="78" height="36" rx="18" fill="#f97316"/>
+    <text x="54" y="134" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="800">Simple</text>
+    <text x="126" y="134" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700">Advanced</text>
+    <text x="220" y="134" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Simple view: model, download, dtype, memory, and startup.</text>
 
-    <g transform="translate(34 532)">
-      <rect width="300" height="70" rx="18" fill="#172033" stroke="#26344d"/>
+    <rect x="28" y="174" width="892" height="118" rx="22" fill="#172033" stroke="#26344d"/>
+    <text x="52" y="208" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">Model</text>
+    <rect x="52" y="228" width="692" height="40" rx="14" fill="#0b1020" stroke="#26344d"/>
+    <text x="72" y="254" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Choose local model or enter Hub model ID...</text>
+    <rect x="756" y="228" width="100" height="40" rx="20" fill="#243047" stroke="#394763"/>
+    <text x="779" y="254" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Scan local</text>
+
+    <rect x="28" y="314" width="892" height="126" rx="22" fill="#172033" stroke="#26344d"/>
+    <text x="52" y="348" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">Hugging Face search and download</text>
+    <rect x="52" y="370" width="650" height="40" rx="14" fill="#0b1020" stroke="#26344d"/>
+    <text x="72" y="396" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">Search models...</text>
+    <rect x="714" y="370" width="94" height="40" rx="20" fill="#243047" stroke="#394763"/>
+    <text x="739" y="396" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="14">Search</text>
+    <rect x="52" y="418" width="260" height="1" fill="#26344d"/>
+
+    <g transform="translate(28 468)">
+      <rect width="420" height="70" rx="18" fill="#172033" stroke="#26344d"/>
       <text x="20" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">dtype</text>
-      <text x="20" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">auto</text>
-      <rect x="336" width="300" height="70" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="356" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">GPU memory utilization</text>
-      <text x="356" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">0.90</text>
+      <text x="20" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800">auto ▼</text>
+      <rect x="472" width="420" height="70" rx="18" fill="#172033" stroke="#26344d"/>
+      <text x="492" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">GPU memory utilization</text>
+      <text x="492" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="800">0.90</text>
     </g>
 
-    <g transform="translate(34 624)">
-      <rect width="300" height="54" rx="18" fill="#172033" stroke="#26344d"/>
+    <g transform="translate(28 560)">
+      <rect width="420" height="54" rx="18" fill="#172033" stroke="#26344d"/>
       <text x="20" y="34" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="16">Trust remote code</text>
-      <circle cx="262" cy="27" r="12" fill="#0b1020" stroke="#26344d"/>
-      <rect x="336" width="300" height="54" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="356" y="34" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="16">Auto-start container</text>
-      <circle cx="598" cy="27" r="12" fill="#0b1020" stroke="#26344d"/>
+      <circle cx="382" cy="27" r="12" fill="#0b1020" stroke="#26344d"/>
+      <rect x="472" width="420" height="54" rx="18" fill="#172033" stroke="#26344d"/>
+      <text x="492" y="34" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="16">Auto-start when container starts</text>
+      <circle cx="854" cy="27" r="12" fill="#0b1020" stroke="#26344d"/>
     </g>
   </g>
 
-  <g transform="translate(824 206)">
-    <rect width="704" height="704" rx="32" fill="#111827" stroke="#26344d" filter="url(#shadow)"/>
-    <text x="34" y="48" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="800">Advanced configuration</text>
-    <text x="34" y="78" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">Power-user controls for throughput, memory, KV cache, quantization, and speculative decoding.</text>
+  <g transform="translate(1074 368)">
+    <rect width="432" height="646" rx="28" fill="#111827" stroke="#26344d"/>
+    <text x="26" y="44" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800">Advanced mode</text>
+    <text x="26" y="72" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="15">All Simple controls remain visible; these extra fields appear below them.</text>
+    <rect x="26" y="100" width="178" height="42" rx="21" fill="#172033" stroke="#26344d"/>
+    <text x="60" y="127" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">Simple</text>
+    <rect x="112" y="104" width="86" height="34" rx="17" fill="#f97316"/>
+    <text x="126" y="126" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="800">Advanced</text>
 
-    <rect x="34" y="106" width="166" height="46" rx="23" fill="#172033" stroke="#26344d"/>
-    <text x="86" y="136" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">Simple</text>
-    <rect x="208" y="106" width="180" height="46" rx="23" fill="#f97316"/>
-    <text x="258" y="136" fill="#fff" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800">Advanced</text>
+    <rect x="26" y="166" width="380" height="44" rx="14" fill="#1b2639" stroke="#fb923c"/>
+    <text x="46" y="194" fill="#fb923c" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="800">Advanced performance settings</text>
 
-    <rect x="34" y="182" width="636" height="94" rx="22" fill="#172033" stroke="#26344d"/>
-    <text x="58" y="216" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800">Model and basic fields remain available</text>
-    <text x="58" y="246" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="16">Advanced mode adds tuning controls below the basic launch profile.</text>
-
-    <text x="34" y="320" fill="#fb923c" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800">Advanced performance settings</text>
-    <line x1="34" y1="334" x2="670" y2="334" stroke="#26344d"/>
-
-    <g transform="translate(34 360)">
-      <rect width="300" height="70" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="20" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">Tensor parallel size</text>
-      <text x="20" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">1</text>
-      <rect x="336" width="300" height="70" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="356" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">Pipeline parallel size</text>
-      <text x="356" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">1</text>
+    <g transform="translate(26 232)">
+      <rect width="180" height="64" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="16" y="25" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">Tensor parallel</text>
+      <text x="16" y="47" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800">1</text>
+      <rect x="200" width="180" height="64" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="216" y="25" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">Pipeline parallel</text>
+      <text x="216" y="47" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800">1</text>
     </g>
 
-    <g transform="translate(34 446)">
-      <rect width="300" height="70" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="20" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">Max batched tokens</text>
-      <text x="20" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">auto</text>
-      <rect x="336" width="300" height="70" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="356" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">Max concurrent sequences</text>
-      <text x="356" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">auto</text>
+    <g transform="translate(26 316)">
+      <rect width="180" height="64" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="16" y="25" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">KV cache dtype</text>
+      <text x="16" y="47" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800">fp8 ▼</text>
+      <rect x="200" width="180" height="64" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="216" y="25" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">Quantization</text>
+      <text x="216" y="47" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800">auto ▼</text>
     </g>
 
-    <g transform="translate(34 532)">
-      <rect width="300" height="70" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="20" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">KV cache dtype</text>
-      <text x="20" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">auto / fp8 / int8</text>
-      <rect x="336" width="300" height="70" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="356" y="28" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="14">Quantization</text>
-      <text x="356" y="52" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">awq / gptq / fp8</text>
+    <g transform="translate(26 400)">
+      <rect width="180" height="64" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="16" y="25" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">CPU offload GB</text>
+      <text x="16" y="47" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800">0</text>
+      <rect x="200" width="180" height="64" rx="16" fill="#172033" stroke="#26344d"/>
+      <text x="216" y="25" fill="#9aa7bd" font-family="Inter, Arial, sans-serif" font-size="13">Swap space GB</text>
+      <text x="216" y="47" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="800">auto</text>
     </g>
 
-    <g transform="translate(34 618)">
-      <rect width="300" height="54" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="20" y="34" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="16">Prefix caching</text>
-      <circle cx="262" cy="27" r="12" fill="#0b1020" stroke="#26344d"/>
-      <rect x="336" width="300" height="54" rx="18" fill="#172033" stroke="#26344d"/>
-      <text x="356" y="34" fill="#eef2ff" font-family="Inter, Arial, sans-serif" font-size="16">Disable request logs</text>
-      <circle cx="598" cy="27" r="12" fill="#fb923c"/>
-    </g>
+    <rect x="26" y="492" width="380" height="74" rx="18" fill="#080d18"/>
+    <text x="46" y="522" fill="#93c5fd" font-family="Menlo, Consolas, monospace" font-size="13">Speculative / MTP JSON</text>
+    <text x="46" y="548" fill="#93c5fd" font-family="Menlo, Consolas, monospace" font-size="13">Extra raw vLLM args</text>
 
-    <rect x="34" y="692" width="636" height="1" fill="#26344d"/>
-    <text x="34" y="724" fill="#93c5fd" font-family="Menlo, Consolas, monospace" font-size="14">Speculative / MTP JSON + Extra raw vLLM args</text>
+    <rect x="26" y="590" width="380" height="34" rx="17" fill="#1f2937" stroke="#26344d"/>
+    <text x="46" y="612" fill="#fbbf24" font-family="Inter, Arial, sans-serif" font-size="13">Restart required after changing launch parameters</text>
   </g>
 </svg>
