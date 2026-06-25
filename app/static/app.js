@@ -25,6 +25,7 @@ const checkboxes = [
 
 const $ = (id) => document.getElementById(id);
 let currentConfig = {};
+let configMode = "simple";
 
 function setToast(message, kind = "") {
   const toast = $("toast");
@@ -98,6 +99,43 @@ function formatCommand(command, error) {
   return command
     .map((part) => (/^[A-Za-z0-9_./:=+-]+$/.test(String(part)) ? String(part) : JSON.stringify(String(part))))
     .join(" ");
+}
+
+function setConfigMode(mode) {
+  configMode = mode === "advanced" ? "advanced" : "simple";
+  const form = $("settingsForm");
+  const simpleBtn = $("simpleModeBtn");
+  const advancedBtn = $("advancedModeBtn");
+  const isAdvanced = configMode === "advanced";
+
+  if (form) {
+    form.classList.toggle("simple-mode", !isAdvanced);
+    form.classList.toggle("advanced-mode", isAdvanced);
+  }
+  for (const el of document.querySelectorAll(".advanced-config")) {
+    el.hidden = !isAdvanced;
+  }
+  for (const el of document.querySelectorAll(".simple-config")) {
+    el.hidden = false;
+  }
+  if (simpleBtn && advancedBtn) {
+    simpleBtn.classList.toggle("active", !isAdvanced);
+    advancedBtn.classList.toggle("active", isAdvanced);
+    simpleBtn.setAttribute("aria-selected", String(!isAdvanced));
+    advancedBtn.setAttribute("aria-selected", String(isAdvanced));
+  }
+  const help = $("modeHelp");
+  if (help) {
+    help.textContent = isAdvanced
+      ? "Advanced mode shows every vLLM tuning option, including KV cache, quantization, offload, batching, and MTP/speculative JSON."
+      : "Simple mode shows the common model, memory, dtype, download, and startup controls.";
+  }
+  localStorage.setItem("configMode", configMode);
+}
+
+function initConfigMode() {
+  const saved = localStorage.getItem("configMode") || "simple";
+  setConfigMode(saved);
 }
 
 async function refreshStatus() {
@@ -304,6 +342,8 @@ function wireEvents() {
   $("refreshModels").addEventListener("click", () => scanModels().catch((e) => setToast(e.message, "bad")));
   $("hfSearchBtn").addEventListener("click", () => searchHfModels().catch((e) => setToast(e.message, "bad")));
   $("hfDownloadBtn").addEventListener("click", () => downloadHfModel().catch((e) => setToast(e.message, "bad")));
+  $("simpleModeBtn")?.addEventListener("click", () => setConfigMode("simple"));
+  $("advancedModeBtn")?.addEventListener("click", () => setConfigMode("advanced"));
   $("hfQuery").addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -333,8 +373,9 @@ function wireEvents() {
 async function boot() {
   initTheme();
   wireEvents();
+  initConfigMode();
   await loadConfig();
-  $("hfQuery").value = "HauhauCS Gemma";
+  $("hfQuery").value = "Gemma";
   $("hfRepoId").value = $("model").value.includes("/") ? $("model").value : "";
   await scanModels().catch(() => {});
   await refreshDownloads().catch(() => {});
