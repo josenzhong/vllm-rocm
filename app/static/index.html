@@ -58,7 +58,8 @@
             <button id="simpleModeBtn" class="mode-tab active" type="button" role="tab" aria-selected="true">Simple</button>
             <button id="advancedModeBtn" class="mode-tab" type="button" role="tab" aria-selected="false">Advanced</button>
           </div>
-          <p id="modeHelp" class="mode-help">Simple mode shows the common model, memory, dtype, and startup controls. Advanced mode adds cache, quantization, offload, batching, and MTP/speculative settings.</p>
+          <p id="modeHelp" class="mode-help">Simple mode shows common model, memory, dtype, download, and startup controls. Advanced mode includes every Simple option plus cache, quantization, offload, batching, and MTP/speculative settings.</p>
+          <p class="mode-help restart-note">Engine and model changes are applied by restarting vLLM. Use <strong>Restart</strong> after changing launch parameters.</p>
 
           <form id="settingsForm" class="form-grid simple-mode">
             <label class="field wide simple-config">
@@ -130,6 +131,7 @@
 
             <div class="advanced-divider advanced-config wide">
               <span>Advanced performance settings</span>
+              <small>These are vLLM launch arguments and require Restart to apply.</small>
             </div>
 
             <label class="field advanced-config">
@@ -156,18 +158,27 @@
               <span>KV cache dtype</span>
               <select id="kv_cache_dtype">
                 <option value="auto">auto</option>
+                <option value="bfloat16">bfloat16</option>
+                <option value="float16">float16</option>
                 <option value="fp8">fp8</option>
                 <option value="fp8_e4m3">fp8_e4m3</option>
                 <option value="fp8_e5m2">fp8_e5m2</option>
-                <option value="bfloat16">bfloat16</option>
-                <option value="float16">float16</option>
                 <option value="int8_per_token_head">int8_per_token_head</option>
               </select>
             </label>
 
             <label class="field advanced-config">
               <span>Quantization</span>
-              <input id="quantization" type="text" placeholder="awq, gptq, fp8, ..." />
+              <select id="quantization">
+                <option value="">auto / model default</option>
+                <option value="awq">awq</option>
+                <option value="gptq">gptq</option>
+                <option value="fp8">fp8</option>
+                <option value="bitsandbytes">bitsandbytes</option>
+                <option value="gguf">gguf</option>
+                <option value="marlin">marlin</option>
+              </select>
+              <small>Leave empty to let vLLM read the model config.</small>
             </label>
 
             <label class="field advanced-config">
