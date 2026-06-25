@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Container version="2">
-  <Name>vLLM ROCm</Name>
-  <Repository>vllm/vllm-openai-rocm:latest</Repository>
-  <Registry>https://hub.docker.com/r/vllm/vllm-openai-rocm</Registry>
+  <Name>vLLM ROCm Manager</Name>
+  <Repository>ghcr.io/josenzhong/vllm-rocm:latest</Repository>
+  <Registry>https://github.com/josenzhong/vllm-rocm/pkgs/container/vllm-rocm</Registry>
   <Network>bridge</Network>
   <MyIP/>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
 
   <Support>https://github.com/josenzhong/vllm-rocm/issues</Support>
-  <Project>https://github.com/vllm-project/vllm</Project>
+  <Project>https://github.com/josenzhong/vllm-rocm</Project>
   <ReadMe>https://raw.githubusercontent.com/josenzhong/vllm-rocm/main/docs/vllm-rocm.md</ReadMe>
   <TemplateURL>https://raw.githubusercontent.com/josenzhong/vllm-rocm/main/templates/vllm-rocm.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/josenzhong/vllm-rocm/main/icon.svg</Icon>
 
   <Category>AI: Productivity: Tools:</Category>
-  <WebUI>http://[IP]:[PORT:8000]/v1/models</WebUI>
+  <WebUI>http://[IP]:[PORT:8080]/</WebUI>
 
-  <Overview>OpenAI-compatible vLLM API server using the official ROCm image for AMD GPUs. This is an API/backend service, not a model-manager WebUI.</Overview>
+  <Overview>Modern WebUI manager for vLLM ROCm on Unraid. Pick local models, tune advanced vLLM settings, and start or restart the OpenAI-compatible API backend.</Overview>
 
-  <Description>vLLM ROCm runs the official vllm/vllm-openai-rocm container on Unraid for AMD GPU inference.
+  <Description>vLLM ROCm Manager wraps the official vLLM ROCm image with a lightweight WebUI for Unraid.
 
-This template is intended for AMD ROCm-capable GPUs and exposes the OpenAI-compatible API on port 8000. It maps /dev/kfd and /dev/dri into the container and stores model/cache data under /root/.cache/huggingface.
+The WebUI runs on port 8080 and lets you scan local model folders, choose a Hugging Face model ID or local model path, configure vLLM startup options, save profiles, start/stop/restart vLLM, preview the generated command, and view logs.
 
-Important: vLLM is an API server, not a full WebUI. The WebUI button opens the /v1/models API endpoint for a quick health check. It does not provide browser-based model browsing, model downloading, or runtime configuration. To chat in a browser or pick from served models, pair this container with Open WebUI or another OpenAI-compatible frontend.
+The vLLM OpenAI-compatible API runs on port 8000 when started from the WebUI. Use http://UNRAID_IP:8000/v1 with Open WebUI, LiteLLM, Lobe Chat, or other OpenAI-compatible clients.
 
-Models are selected at container startup through the Model Arguments field. For Hugging Face models, use --model organization/model-name. For a model already stored on the Unraid server, mount it through Local Models and use --model /models/path-to-model.
-
-Start with a small model such as Qwen/Qwen3-0.6B, then adjust Model Arguments for larger models.</Description>
+Advanced settings include dtype, GPU memory utilization, max model length, max batched tokens, max sequences, tensor/pipeline parallel size, KV cache dtype including fp8/int8 options exposed by vLLM, prefix caching, quantization, CPU offload, swap space, speculative/MTP JSON, trust remote code, and raw extra vLLM args.</Description>
 
   <Requires>AMD ROCm-capable GPU with /dev/kfd and /dev/dri available on the Unraid host. Radeon Top or equivalent AMD GPU host support may be required. Consumer Radeon GPU compatibility can depend on the ROCm/vLLM image version and selected model.</Requires>
 
   <ExtraParams>--device=/dev/kfd --device=/dev/dri --group-add=video --cap-add=SYS_PTRACE --security-opt=seccomp=unconfined --ipc=host</ExtraParams>
 
-  <Config Name="API Port" Target="8000" Default="8000" Mode="tcp" Description="OpenAI-compatible vLLM API port. The WebUI button opens /v1/models as a health check, not a full browser UI." Type="Port" Display="always" Required="true" Mask="false">8000</Config>
-  <Config Name="Model Cache" Target="/root/.cache/huggingface" Default="/mnt/user/appdata/vllm" Mode="rw" Description="Stores Hugging Face model downloads and cache files." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/vllm</Config>
-  <Config Name="Local Models" Target="/models" Default="/mnt/user/appdata/vllm/models" Mode="rw" Description="Optional folder for manually downloaded local models. Use --model /models/your-model-folder in Model Arguments." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/vllm/models</Config>
+  <Config Name="Manager WebUI" Target="8080" Default="8080" Mode="tcp" Description="vLLM ROCm Manager WebUI port." Type="Port" Display="always" Required="true" Mask="false">8080</Config>
+  <Config Name="vLLM API Port" Target="8000" Default="8000" Mode="tcp" Description="OpenAI-compatible vLLM API port served by the managed vLLM process." Type="Port" Display="always" Required="true" Mask="false">8000</Config>
+  <Config Name="Manager Config" Target="/config" Default="/mnt/user/appdata/vllm/config" Mode="rw" Description="Persistent manager configuration and launch profile." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/vllm/config</Config>
+  <Config Name="Model Cache" Target="/root/.cache/huggingface" Default="/mnt/user/appdata/vllm/cache" Mode="rw" Description="Stores Hugging Face model downloads and cache files." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/vllm/cache</Config>
+  <Config Name="Local Models" Target="/models" Default="/mnt/user/appdata/vllm/models" Mode="rw" Description="Folder scanned by the WebUI for local Hugging Face-format models containing config.json." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/vllm/models</Config>
   <Config Name="Hugging Face Token" Target="HF_TOKEN" Default="" Mode="" Description="Optional Hugging Face token for gated or private models." Type="Variable" Display="always" Required="false" Mask="true"></Config>
-  <Config Name="Model Arguments" Target="" Default="--model Qwen/Qwen3-0.6B" Mode="" Description="Arguments passed to vLLM after the image name. Examples: --model Qwen/Qwen3-0.6B or --model /models/my-local-model --dtype auto --gpu-memory-utilization 0.90 --max-model-len 8192" Type="Argument" Display="always" Required="true" Mask="false">--model Qwen/Qwen3-0.6B</Config>
 </Container>
