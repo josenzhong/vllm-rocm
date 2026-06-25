@@ -108,6 +108,7 @@ async function refreshStatus() {
   $("apiStatus").textContent = status.api_base || "-";
   $("modelStatus").textContent = $("model").value || "-";
   $("commandPreview").textContent = formatCommand(status.command, status.command_error);
+  renderDownloads(status.downloads || []);
 }
 
 async function refreshLogs() {
@@ -173,6 +174,116 @@ async function scanModels() {
   setToast(`Found ${models.length} local model folder(s).`, "good");
 }
 
+function renderHfResults(models) {
+  const container = $("hfResults");
+  container.innerHTML = "";
+  if (!models.length) {
+    container.innerHTML = "<div class='hub-result'>No matching models found.</div>";
+    return;
+  }
+  for (const model of models) {
+    const card = document.createElement("article");
+    card.className = "hub-result";
+    const tags = (model.tags || []).slice(0, 5).map((tag) => `<span class='chip'>${escapeHtml(tag)}</span>`).join("");
+    card.innerHTML = `
+      <div class="hub-result-main">
+        <div>
+          <strong>${escapeHtml(model.id)}</strong>
+          <div class="hub-meta">
+            <span>${model.downloads ?? 0} downloads</span>
+            <span>${model.likes ?? 0} likes</span>
+            ${model.pipeline_tag ? `<span>${escapeHtml(model.pipeline_tag)}</span>` : ""}
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="secondary use-hf" type="button">Use ID</button>
+          <button class="primary download-hf" type="button">Download</button>
+        </div>
+      </div>
+      <div class="hub-meta">${tags}</div>
+    `;
+    card.querySelector(".use-hf").addEventListener("click", () => {
+      $("model").value = model.id;
+      $("hfRepoId").value = model.id;
+      refreshStatus().catch(() => {});
+    });
+    card.querySelector(".download-hf").addEventListener("click", () => {
+      $("hfRepoId").value = model.id;
+      downloadHfModel().catch((error) => setToast(error.message, "bad"));
+    });
+    container.appendChild(card);
+  }
+}
+
+async function searchHfModels() {
+  const query = $("hfQuery").value.trim();
+  if (!query) throw new Error("Enter a search query first.");
+  setToast("Searching Hugging Face...", "");
+  const payload = await api(`/api/hf/search?q=${encodeURIComponent(query)}&limit=20`);
+  renderHfResults(payload.models || []);
+  setToast(`Found ${(payload.models || []).length} model(s).`, "good");
+}
+
+async function downloadHfModel() {
+  const repoId = $("hfRepoId").value.trim();
+  if (!repoId) throw new Error("Enter a Hugging Face repository ID first.");
+  const payload = await api("/api/hf/download", {
+    method: "POST",
+    body: JSON.stringify({
+      repo_id: repoId,
+      revision: $("hfRevision").value.trim(),
+      local_dir: $("hfLocalDir").value.trim(),
+    }),
+  });
+  setToast(`Download queued for ${payload.download.repo_id}.`, "good");
+  await refreshDownloads();
+}
+
+async function refreshDownloads() {
+  const payload = await api("/api/downloads");
+  renderDownloads(payload.downloads || []);
+}
+
+function renderDownloads(downloads) {
+  const container = $("downloadStatus");
+  if (!container) return;
+  container.innerHTML = "";
+  if (!downloads.length) return;
+  for (const item of downloads.slice(0, 6)) {
+    const card = document.createElement("article");
+    card.className = "download-item";
+    card.innerHTML = `
+      <strong>${escapeHtml(item.repo_id)}</strong>
+      <div class="hub-meta">
+        <span class="chip">${escapeHtml(item.state)}</span>
+        <span>${escapeHtml(item.message || "")}</span>
+      </div>
+      <small>${escapeHtml(item.target || item.path || "")}</small>
+    `;
+    if (item.state === "completed" && item.path) {
+      const button = document.createElement("button");
+      button.className = "secondary";
+      button.type = "button";
+      button.textContent = "Use downloaded path";
+      button.addEventListener("click", () => {
+        $("model").value = item.path;
+        refreshStatus().catch(() => {});
+      });
+      card.appendChild(button);
+    }
+    container.appendChild(card);
+  }
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function initTheme() {
   const saved = localStorage.getItem("theme");
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -191,6 +302,14 @@ function wireEvents() {
   $("restartBtn").addEventListener("click", () => restart().catch((e) => setToast(e.message, "bad")));
   $("refreshLogs").addEventListener("click", () => refreshLogs().catch((e) => setToast(e.message, "bad")));
   $("refreshModels").addEventListener("click", () => scanModels().catch((e) => setToast(e.message, "bad")));
+  $("hfSearchBtn").addEventListener("click", () => searchHfModels().catch((e) => setToast(e.message, "bad")));
+  $("hfDownloadBtn").addEventListener("click", () => downloadHfModel().catch((e) => setToast(e.message, "bad")));
+  $("hfQuery").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      searchHfModels().catch((e) => setToast(e.message, "bad"));
+    }
+  });
   $("modelSelect").addEventListener("change", (event) => {
     if (event.target.value) {
       $("model").value = event.target.value;
@@ -215,9 +334,13 @@ async function boot() {
   initTheme();
   wireEvents();
   await loadConfig();
+  $("hfQuery").value = "HauhauCS Gemma";
+  $("hfRepoId").value = $("model").value.includes("/") ? $("model").value : "";
   await scanModels().catch(() => {});
+  await refreshDownloads().catch(() => {});
   await refreshLogs();
   setInterval(() => refreshStatus().catch(() => {}), 4000);
+  setInterval(() => refreshDownloads().catch(() => {}), 4000);
   setInterval(() => refreshLogs().catch(() => {}), 5000);
 }
 
