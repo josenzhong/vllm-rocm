@@ -1,45 +1,85 @@
-# vLLM ROCm Unraid Community App
+# vLLM ROCm Manager for Unraid
 
-This repository contains an Unraid Community Applications Docker template for running the official vLLM ROCm OpenAI-compatible API server on AMD GPUs.
+A custom Unraid Community Applications template and Docker image for managing vLLM ROCm on AMD GPUs.
+
+The image is based on the official `vllm/vllm-openai-rocm:latest` runtime and adds a modern WebUI for selecting local models, editing vLLM settings, starting/stopping/restarting the vLLM process, previewing the launch command, and viewing logs.
 
 ## Included app
 
-- **vLLM ROCm**: runs `vllm/vllm-openai-rocm:latest` with AMD ROCm device mappings for `/dev/kfd` and `/dev/dri`.
+- **vLLM ROCm Manager**: WebUI on port `8080`, OpenAI-compatible vLLM API on port `8000`.
+
+## Features
+
+- Modern responsive WebUI
+- Light and dark mode
+- Local model scanner for `/models`
+- Hugging Face model ID entry
+- Persistent config under `/config/config.json`
+- Start, stop, and restart vLLM from the browser
+- Command preview
+- Logs panel
+- Advanced vLLM tuning fields:
+  - dtype
+  - GPU memory utilization
+  - max model length
+  - max batched tokens
+  - max sequences
+  - tensor and pipeline parallel size
+  - KV cache dtype, including fp8/int8 options exposed by vLLM
+  - quantization
+  - prefix caching
+  - CPU offload
+  - swap space
+  - trust remote code
+  - speculative/MTP JSON
+  - raw extra vLLM args
 
 ## Repository layout
 
 ```text
+Dockerfile
+app/server.py
+app/static/index.html
+app/static/styles.css
+app/static/app.js
 ca_profile.xml
 templates/vllm-rocm.xml
 docs/vllm-rocm.md
+.github/workflows/docker-publish.yml
 icon.svg
 LICENSE
 ```
 
-## Requirements
+## Unraid paths
 
-- Unraid host with AMD GPU support exposed as `/dev/kfd` and `/dev/dri`
-- ROCm-capable AMD GPU
-- Enough VRAM for the selected model
-- Optional Hugging Face token for gated/private models
+Default mappings:
+
+```text
+/mnt/user/appdata/vllm/config -> /config
+/mnt/user/appdata/vllm/cache  -> /root/.cache/huggingface
+/mnt/user/appdata/vllm/models -> /models
+```
 
 ## Usage
 
-The template defaults to a small smoke-test model:
-
-```text
---model Qwen/Qwen3-0.6B
-```
-
-After confirming the container starts, edit **Model Arguments** to use your preferred model and runtime settings.
-
-The vLLM API endpoint is:
+1. Install the Community App template.
+2. Open the WebUI at `http://UNRAID_IP:8080`.
+3. Pick a local model from `/models` or enter a Hugging Face model ID.
+4. Tune settings.
+5. Click **Start** or **Restart**.
+6. Point Open WebUI or another OpenAI-compatible client at:
 
 ```text
 http://UNRAID_IP:8000/v1
 ```
 
-vLLM is an API server, not a full browser chat UI. For chat, connect Open WebUI or another OpenAI-compatible frontend to the `/v1` endpoint.
+## Docker image
+
+The GitHub Actions workflow publishes:
+
+```text
+ghcr.io/josenzhong/vllm-rocm:latest
+```
 
 ## Submission notes
 
