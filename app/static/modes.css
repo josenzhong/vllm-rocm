@@ -1,0 +1,40 @@
+.mode-switch {
+  display: inline-flex;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--panel-2);
+  margin: 0 0 8px;
+}
+
+.mode-tab {
+  border-radius: 999px;
+  padding: 9px 18px;
+  background: transparent;
+  border-color: transparent;
+}
+
+.mode-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.mode-help {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.advanced-divider {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.field.wide,
+.wide {
+  grid-column: 1 / -1;
+}
