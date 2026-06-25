@@ -2,7 +2,11 @@
 
 A custom Unraid Community Applications template and Docker image for managing vLLM ROCm on AMD GPUs.
 
-The image is based on the official `vllm/vllm-openai-rocm:latest` runtime and adds a modern WebUI for selecting local models, editing vLLM settings, starting/stopping/restarting the vLLM process, previewing the launch command, and viewing logs.
+The image is based on the official `vllm/vllm-openai-rocm:latest` runtime and adds a modern WebUI for selecting local models, searching the model hub, downloading models to Unraid storage, editing vLLM settings, starting/stopping/restarting the vLLM process, previewing the launch command, and viewing logs.
+
+## Screenshot
+
+![vLLM ROCm Manager WebUI](docs/webui-screenshot.svg)
 
 ## Included app
 
@@ -12,8 +16,10 @@ The image is based on the official `vllm/vllm-openai-rocm:latest` runtime and ad
 
 - Modern responsive WebUI
 - Light and dark mode
+- Model hub search
+- Background model downloads into `/models`
 - Local model scanner for `/models`
-- Hugging Face model ID entry
+- Hub model ID entry
 - Persistent config under `/config/config.json`
 - Start, stop, and restart vLLM from the browser
 - Command preview
@@ -45,6 +51,7 @@ app/static/app.js
 ca_profile.xml
 templates/vllm-rocm.xml
 docs/vllm-rocm.md
+docs/webui-screenshot.svg
 .github/workflows/docker-publish.yml
 icon.svg
 LICENSE
@@ -60,11 +67,13 @@ Default mappings:
 /mnt/user/appdata/vllm/models -> /models
 ```
 
+Downloaded models are stored under `/models`, which maps to `/mnt/user/appdata/vllm/models` by default.
+
 ## Usage
 
 1. Install the Community App template.
 2. Open the WebUI at `http://UNRAID_IP:8080`.
-3. Pick a local model from `/models` or enter a Hugging Face model ID.
+3. Search the model hub, download a model, or pick a local model from `/models`.
 4. Tune settings.
 5. Click **Start** or **Restart**.
 6. Point Open WebUI or another OpenAI-compatible client at:
